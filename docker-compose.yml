@@ -1,0 +1,48 @@
+version: '3'
+services:
+  postgres:
+    image: 'postgres:latest'
+  redis:
+    image: 'redis:latest'
+  nginx:
+    restart: always
+    build:
+      context: C:\Users\abhispandey\docker-demo\complex\nginx
+      dockerfile: Dockerfile.dev
+    ports:
+      - '3050:80'
+  api:
+    build:
+      context: C:\Users\abhispandey\docker-demo\complex\server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - //C/Users/abhispandey/docker-demo/complex/server:/usr/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+    depends_on:
+      - postgres
+  client:
+    build:
+      context: C:\Users\abhispandey\docker-demo\complex\client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - //C/Users/abhispandey/docker-demo/complex/client:/usr/app
+  worker:
+    build:
+      context: C:\Users\abhispandey\docker-demo\complex\worker
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - //C/Users/abhispandey/docker-demo/complex/worker:/usr/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
